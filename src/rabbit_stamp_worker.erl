@@ -73,11 +73,11 @@ code_change(_, State, _) ->
 
 % helpers
 get_next_number(ExchangeName, State) ->
-    case proplists:get_value(ExchangeName, State, unknown) of
+    CurrentCount =  case proplists:get_value(ExchangeName, State, unknown) of
         unknown -> 
-            CurrentCount = get_timestamp();
+            get_timestamp();
         {LocalCount} ->
-            CurrentCount = LocalCount
+            LocalCount
     end,
 
     NextCount = CurrentCount + 1,
@@ -99,7 +99,7 @@ build_delivery(Delivery, Message) ->
     rabbit_basic:delivery(Mandatory, DoConfirm, Message, MsgSeqNo).
 
 get_timestamp() ->
-    {Mega,Sec,Micro} = erlang:now(),
+    {Mega,Sec,Micro} = erlang:timestamp(),
     (Mega*1000000+Sec)*1000000+Micro.
 
 find_worker() ->
